@@ -1,0 +1,32 @@
+{
+    "name": "kafkiansky/kafka-interactor",
+    "description": "The rdkafka high-level interactor.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kafkiansky\\KafkaInteractor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kafkiansky\\KafkaInteractor\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "v.zanfir",
+            "email": "vadimzanfir@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">= 8.1",
+        "ext-rdkafka": "*",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "vimeo/psalm": "^4.26",
+        "phpunit/phpunit": "^9.5"
+    }
+}

@@ -1,0 +1,10 @@
+<?php
+
+namespace RdKafka;
+
+final class Topic
+{
+    public function producev(int $partition, int $flags, string $message, ?string $key = null, array $headers = []): void
+    {
+    }
+}
