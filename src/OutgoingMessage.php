@@ -14,6 +14,7 @@ final class OutgoingMessage
         public readonly ?int $partition = null,
         public readonly int $flags = 0,
         public readonly array $headers = [],
+        public readonly ?Topic $topic = null,
     ) {
         if ('' === $this->content) {
             throw new \InvalidArgumentException('The content should not be empty.');

@@ -14,7 +14,7 @@ final class Producer
 
     public function produce(OutgoingMessage $message, int $flushTimeout = 1000): void
     {
-        $topic = $this->producer->newTopic((string)$this->topic);
+        $topic = $this->producer->newTopic((string)($message->topic ?: $this->topic));
         $topic->producev(
             $message->partition ?: \RD_KAFKA_PARTITION_UA,
             $message->flags,
