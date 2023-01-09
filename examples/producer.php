@@ -23,6 +23,9 @@ $config = Config::withPlainAuthentication($username, $password)
         'enable.partition.eof' => 'true',
     ])
     ->withLogLevel((string)\LOG_INFO)
+    ->onError(function (): void {
+        // log or throw exception
+    });
 ;
 
 $factory = new RdKafkaConnectionFactory($config);

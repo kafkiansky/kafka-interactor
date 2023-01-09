@@ -7,15 +7,25 @@ namespace Kafkiansky\KafkaInteractor;
 /**
  * @template-implements \ArrayAccess<string, string>
  * @template-implements \IteratorAggregate<string, string>
+ *
+ * @psalm-type ErrorCallback = callable(\RdKafka, int, string):void
  */
 final class Config implements \ArrayAccess, \IteratorAggregate
 {
     /**
+     * @var ErrorCallback|null
+     */
+    private $onError;
+
+    /**
      * @param array<string, string> $values
+     * @param ErrorCallback|null $onError
      */
     private function __construct(
         private array $values,
+        ?callable $onError = null,
     ) {
+        $this->onError = $onError;
     }
 
     public static function new(): Config
@@ -37,6 +47,14 @@ final class Config implements \ArrayAccess, \IteratorAggregate
             'sasl.username' => $username,
             'sasl.password' => $password,
         ]);
+    }
+
+    /**
+     * @param ErrorCallback $onError
+     */
+    public function onError(callable $onError): Config
+    {
+        return new Config($this->values, $onError);
     }
 
     /**
@@ -158,6 +176,10 @@ final class Config implements \ArrayAccess, \IteratorAggregate
 
         foreach ($this->values as $key => $value) {
             $conf->set($key, $value);
+        }
+
+        if (null !== $this->onError) {
+            $conf->setErrorCb($this->onError);
         }
 
         return $conf;
