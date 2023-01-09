@@ -17,16 +17,29 @@ final class Consumer
 
     /**
      * @param callable(IncomingMessage): void $consumer
+     * @param (callable():bool)|null $onEachTick
+     * @param (callable(string, int):void)|null $onError
      *
      * @throws InvalidMessageReceived
      */
     public function consume(
         callable $consumer,
         int $timeout = 120 * 1000,
+        ?callable $onEachTick = null,
+        ?callable $onError = null,
     ): void {
+        $onEachTick ??= fn(): bool => false;
+        $onError ??= function(string $error, int $code): never {
+            throw new InvalidMessageReceived($error, $code);
+        };
+
         $this->consumer->subscribe([(string)$this->topic]);
 
         while (true) {
+            if ($onEachTick()) {
+                return;
+            }
+
             $message = $this->consumer->consume($timeout);
             switch ($message->err) {
                 case \RD_KAFKA_RESP_ERR_NO_ERROR:
@@ -47,7 +60,7 @@ final class Consumer
                     ]);
                     break;
                 default:
-                    throw new InvalidMessageReceived($message->errstr(), $message->err);
+                    $onError($message->errstr(), $message->err);
             }
         }
     }
