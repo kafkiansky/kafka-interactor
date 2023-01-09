@@ -30,3 +30,5 @@ $consumer = $factory->createConsumer(new Topic($topic));
 $consumer->consume(function (IncomingMessage $message): void {
     var_dump($message);
 }, 1000);
+
+$consumer->consume(function (IncomingMessage $_message): void {}, onEachTick: fn (): bool => false);

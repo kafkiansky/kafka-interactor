@@ -17,7 +17,7 @@ final class Consumer
 
     /**
      * @param callable(IncomingMessage): void $consumer
-     * @param (callable():bool)|null $onEachTick
+     * @param (callable():bool)|null $onEachTick While callback returns true, loop will spin.
      * @param (callable(string, int):void)|null $onError
      *
      * @throws InvalidMessageReceived
@@ -28,18 +28,14 @@ final class Consumer
         ?callable $onEachTick = null,
         ?callable $onError = null,
     ): void {
-        $onEachTick ??= fn(): bool => false;
+        $onEachTick ??= fn(): bool => true;
         $onError ??= function(string $error, int $code): never {
             throw new InvalidMessageReceived($error, $code);
         };
 
         $this->consumer->subscribe([(string)$this->topic]);
 
-        while (true) {
-            if ($onEachTick()) {
-                return;
-            }
-
+        while ($onEachTick()) {
             $message = $this->consumer->consume($timeout);
             switch ($message->err) {
                 case \RD_KAFKA_RESP_ERR_NO_ERROR:
