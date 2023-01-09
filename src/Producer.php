@@ -12,7 +12,7 @@ final class Producer
     ) {
     }
 
-    public function produce(OutgoingMessage $message, int $flushTimeout = 1000, int $pollTimeout = 50): void
+    public function produce(OutgoingMessage $message, int $flushTimeout = 1000): void
     {
         $topic = $this->producer->newTopic((string)($message->topic ?: $this->topic));
         $topic->producev(
@@ -23,9 +23,5 @@ final class Producer
         );
 
         $this->producer->flush($flushTimeout);
-
-        while ($this->producer->getOutQLen()) {
-            $this->producer->poll($pollTimeout);
-        }
     }
 }
